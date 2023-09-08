@@ -1,0 +1,11 @@
+[node1]
+172.17.0.2 owner=node1
+[node2]
+172.17.0.3 owner=node2
+
+[nodes:children]
+node1
+node2
+
+[nodes:vars]
+ansible_ssh_user=root

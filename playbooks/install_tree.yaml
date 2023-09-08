@@ -1,0 +1,17 @@
+---
+- name: install tree on first node
+  hosts: node1
+  gather_facts: no
+  #to get root privileges
+  become: True
+  tasks:
+    - name: install tree
+      apt: name=tree
+
+- name: install tree on second node
+  hosts: node2
+  gather_facts: no
+  become: True
+  tasks:
+    - name: install tree
+      apt: name=tree

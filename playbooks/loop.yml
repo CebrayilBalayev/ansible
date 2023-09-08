@@ -1,0 +1,23 @@
+---
+- name: install apache and upload web page
+  hosts: node1
+  become: yes
+
+  tasks:
+    - name: print elments
+      debug:
+        msg: "element {{item}}"
+      loop:
+        - "A"
+        - "B"
+
+    - name: loop until
+      shell: echo -n Z >> myfile.txt && cat myfile.txt
+      register: output
+      delay: 2
+      retries: 10
+      until: output.stdout.find("ZZZZ") == false
+
+    - name: print untils output
+      debug:
+        var: output.stdout

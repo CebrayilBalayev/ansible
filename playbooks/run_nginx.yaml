@@ -1,0 +1,23 @@
+---
+#not working with docker containers
+- name: run ngnix on first node
+  hosts: node1
+  gather_facts: no
+  become: True
+  tasks:
+    - name: run nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+- name: run ngnix on second node
+  hosts: node2
+  gather_facts: no
+  become: True
+  tasks:
+    - name: run nginx
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes

@@ -1,0 +1,32 @@
+---
+- name: pb pulling variables
+  hosts: nodes
+  become: yes
+
+  vars:
+    message1: Hello
+    message2: World
+
+  tasks:
+    - name: print variables from playbook
+      debug:
+        var: message1
+
+    - name: print with some message
+      debug:
+        msg: "second message is : {{ message2 }}"
+
+    - name: use owner var from inventory
+      debug:
+        msg: "owner is : {{ owner }}"
+
+    - name: join strings
+      set_fact: full_mes="{{message1}} {{owner}}"
+    - name: print joined strings
+      debug:
+        var: full_mes
+
+    - name: use string from nodes setup
+      debug:
+        var: ansible_distribution
+

@@ -1,0 +1,24 @@
+---
+- name: install apache and upload web page
+  hosts: nodes
+  become: yes
+
+  vars:
+    source_file: ./src/index.html
+    destin_file: /var/www/html
+
+  tasks:
+    - name: install apache
+      apt: name=apache2 state=latest
+
+    - name: copy files to apaches location
+      copy: src={{ source_file }} dest={{ destin_file }} mode=0555
+      notify: restart apache flag
+
+    - name: start apache
+      service: name=apache2 state=started enabled=yes
+
+  #will be executed each time copy executed
+  handlers:
+    - name: restart apache flag
+      service: name=apache2 state=restarted

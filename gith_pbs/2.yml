@@ -1,0 +1,14 @@
+---
+- name: Check Status
+  hosts: nodes
+  become: true
+  vars:
+    package: "apache2"
+
+  tasks:
+    - name: Check status of {{ package }} service
+      service_facts:
+      register: service_state
+
+    - debug:
+        var: service_state.ansible_facts.services["{{ package }}.service"].state

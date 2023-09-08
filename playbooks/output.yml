@@ -1,0 +1,15 @@
+---
+- name: get output from node
+  hosts: nodes
+  become: yes
+
+  tasks:
+    - shell: uptime
+      register: results
+
+    - debug:
+        var: results
+    - debug:     
+        var: results.stdout
+    - debug:     
+        var: results.start

@@ -1,0 +1,61 @@
+- name: copy images to folder using loop
+  hosts: nodes
+  become: yes
+
+  vars:
+    source_file: ./src
+    destin_file: /var/www/html
+
+  tasks:
+    - block:
+      - name: install apache
+        apt: name=apache2 state=latest
+
+      #method for containers
+      - name: start apache if docker used
+        shell: service apache2 start
+        when: ansible_virtualization_type == "docker"
+
+      #method for vm
+      - name: start apache 
+        service:
+          name: apache2
+          state: started
+        when: ansible_virtualization_type != "docker"
+
+      - name: generate html file from ninja
+        template: src={{source_file}}/index.j2 dest={{destin_file}}/index.html mode=0555
+        notify:
+        - restart apache
+        - restart apache docker
+
+      - name: copy files to apaches location
+        copy: src={{ source_file }}/{{ item }} dest={{ destin_file }} mode=0555
+        loop:
+          - "1.jpg"
+          - "2.jpg"
+          - "3.jpg"
+        notify:
+        - restart apache
+        - restart apache docker      
+      when: ansible_os_family == "Debian"
+      
+  handlers:
+    - block:
+      - name: restart apache docker
+        shell: service apache2 restart
+
+      when: 
+      - ansible_os_family == "Debian"
+      - ansible_virtualization_type == "docker"
+
+    - block:
+      - name: restart apache
+        service:
+          name: apache2
+          state: restarted
+
+      when: 
+      - ansible_os_family == "Debian"
+      - ansible_virtualization_type != "docker"
+

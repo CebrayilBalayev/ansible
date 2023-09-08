@@ -1,0 +1,6 @@
+- name: copy images to folder using loop
+  hosts: nodes
+  become: yes
+
+  roles:
+    - { role: deploy_apache, when: ansible_system == 'Linux' }

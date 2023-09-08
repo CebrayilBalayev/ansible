@@ -1,0 +1,32 @@
+- name: copy images to folder using loop
+  hosts: nodes
+  become: yes
+
+  vars:
+    source_file: ./src
+    destin_file: /var/www/html
+
+  tasks:
+    - name: install apache
+      apt: name=apache2 state=latest
+
+    #method for containers
+    - name: start apache
+      shell: service apache2 start
+
+    - name: generate html file from ninja
+      template: src={{source_file}}/index.j2 dest={{destin_file}}/index.html mode=0555
+      notify: restart apache flag
+
+    - name: copy files to apaches location
+      copy: src={{ source_file }}/{{ item }} dest={{ destin_file }} mode=0555
+      loop:
+        - "1.jpg"
+        - "2.jpg"
+        - "3.jpg"
+      notify: restart apache flag
+
+  #will be executed each time copy executed !for testing with container use service in real ones!
+  handlers:
+    - name: restart apache flag
+      shell: service apache2 restart

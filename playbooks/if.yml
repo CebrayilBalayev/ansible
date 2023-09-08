@@ -1,0 +1,31 @@
+---
+- name: testing if statement in playbook
+  hosts: nodes
+  become: yes
+
+  vars:
+    source_file: ./src/index.html
+    destin_file: /var/www/html
+
+  tasks:
+    - name: return version
+      debug: var=ansible_os_family
+
+    - block:
+      - name: install apache for debian
+        apt: name=apache2 state=latest
+
+      #- name: start apache debian
+      #  service: name=apache2 state=started enabled=yes
+      
+      when: ansible_os_family == "Debian"
+
+
+    - block:
+      - name: install apache for redhat
+        yum: name=httpd state=latest
+    
+      #- name: start apache redhat
+      #  service: name=httpd state=started enabled=yes
+      
+      when: ansible_os_family == "RedHat"

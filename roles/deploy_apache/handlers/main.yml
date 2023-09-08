@@ -1,0 +1,5 @@
+---
+# handlers file for deploy_apache
+#will be executed each time copy executed !for testing with container use service in real ones!
+- name: restart apache flag
+  shell: service apache2 restart

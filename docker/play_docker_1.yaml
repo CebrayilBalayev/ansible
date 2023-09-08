@@ -1,0 +1,33 @@
+#ansible-galaxy collection install community.docker
+- name: run nginx as docker container and add some files into
+  hosts: user
+  become: yes
+
+  vars:
+    source_dir: ../copy_images_loop_jinja/src
+    destin_dir: /home/
+    dest_cont: /usr/share/nginx/html/
+
+  tasks:
+    - name: copy index.html to worker
+      template: src={{source_dir}}/index.j2 dest={{destin_dir}}/index.html
+
+    - name: run nginx and mount the volume
+      community.docker.docker_container:
+        name: nginx_test
+        image: nginx:alpine
+        state: started
+        detach: true
+        ports:
+          - "80:80"
+        volumes:
+          - "{{destin_dir}}:{{dest_cont}}"
+
+    - name: wait some time
+      wait_for:
+        timeout: 15
+
+    - name: stop the container
+      community.docker.docker_container:
+        name: nginx_test
+        state: stopped

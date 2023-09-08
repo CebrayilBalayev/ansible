@@ -1,0 +1,24 @@
+- name: copy packages and install
+  hosts: nodes
+  become: yes
+
+  vars:
+    source_dir: ~/Downloads/docker
+    destin_dir: /home
+    packages :
+      - buildx-plugin.deb
+      - containerd.deb
+      - docker-ce-cli.deb
+      - docker-ce.deb
+      - docker-compose-plugin.deb
+
+  tasks:
+    - name: copy files
+      copy: src={{ source_dir }}/{{ item }} dest={{ destin_dir }}
+      loop: "{{ packages }}"
+
+    - name: install deb packages
+      apt:
+        deb: "{{ destin_dir }}/{{ item }}"
+        state: present
+      loop: "{{ packages }}"

@@ -1,0 +1,21 @@
+---
+# tasks file for deploy_apache
+
+- name: install apache
+  apt: name=apache2 state=latest
+
+#method for containers
+- name: start apache
+  shell: service apache2 start
+
+- name: generate html file from ninja
+  template: src=index.j2 dest={{destin_file}}/index.html mode=0555
+  notify: restart apache flag
+
+- name: copy files to apaches location
+  copy: src={{ item }} dest={{ destin_file }} mode=0555
+  loop:
+    - "1.png"
+    - "2.png"
+    - "3.jpg"
+  notify: restart apache flag
